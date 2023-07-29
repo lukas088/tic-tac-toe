@@ -2,7 +2,7 @@
 import pygame
 
 # Размер окна
-width = 340
+width = 350
 height = 340
 
 # Цвета
