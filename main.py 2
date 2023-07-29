@@ -1,0 +1,88 @@
+import pygame
+
+# Инициализация Pygame
+pygame.init()
+
+# Размеры окна
+WIDTH = 300
+HEIGHT = 300
+
+# Цвета
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+
+# Размер клетки
+CELL_SIZE = WIDTH // 3
+
+# Создание окна
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Крестики-нолики")
+
+# Игровое поле
+board = [['', '', ''],
+         ['', '', ''],
+         ['', '', '']]
+
+# Текущий игрок (крестик или нолик)
+current_player = 'X'
+
+# Отрисовка игровой сетки и символов
+def draw_board():
+    screen.fill(BLACK)
+    for row in range(3):
+        for col in range(3):
+            pygame.draw.rect(screen, WHITE, (col * CELL_SIZE, row * CELL_SIZE, CELL_SIZE, CELL_SIZE), 2)
+            if board[row][col] != '':
+                font = pygame.font.Font(None, 100)
+                text = font.render(board[row][col], True, WHITE)
+                text_rect = text.get_rect(center=(col * CELL_SIZE + CELL_SIZE // 2, row * CELL_SIZE + CELL_SIZE // 2))
+                screen.blit(text, text_rect)
+
+# Проверка на победу
+def check_win(player):
+    # Проверка по горизонтали и вертикали
+    for i in range(3):
+        if board[i][0] == board[i][1] == board[i][2] == player or \
+           board[0][i] == board[1][i] == board[2][i] == player:
+            return True
+    # Проверка по диагоналям
+    if board[0][0] == board[1][1] == board[2][2] == player or \
+       board[2][0] == board[1][1] == board[0][2] == player:
+        return True
+    return False
+
+# Цикл игры
+running = True
+while running:
+    # Обработка событий
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            # Получение координат клика мыши
+            mouse_pos = pygame.mouse.get_pos()
+            col = mouse_pos[0] // CELL_SIZE
+            row = mouse_pos[1] // CELL_SIZE
+            # Проверка, что клетка пустая
+            if board[row][col] == '':
+                # Запись символа текущего игрока в клетку
+                board[row][col] = current_player
+                # Переключение текущего игрока
+                current_player = 'O' if current_player == 'X' else 'X'
+
+    # Проверка на победу
+    if check_win('X'):
+        print("Крестики победили!")
+        running = False
+    elif check_win('O'):
+        print("Нолики победили!")
+        running = False
+
+    # Отрисовка игрового поля
+    draw_board()
+
+    # Обновление экрана
+    pygame.display.flip()
+
+# Завершение игры
+pygame.quit()
